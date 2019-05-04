@@ -32,11 +32,14 @@ object VehicleSpecApi {
 
   implicit def specLike[S <: Spec]: SpecLike[S, Vehicle] = {
     case (location: LocationSpec, vehicle: Vehicle) => location.isSatisfiedBy(vehicle)
+    case (stop: StopSpec, vehicle: Vehicle) => stop.isSatisfiedBy(vehicle)
   }
 
   private implicit val locationSpecLike: SpecLike[LocationSpec, Vehicle] = (spec: LocationSpec, vehicle: Vehicle) => {
     spec.x == vehicle.stopX && spec.y == vehicle.stopY
   }
+
+  private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] = (spec: StopSpec, vehicle: Vehicle) => true
 
 }
 

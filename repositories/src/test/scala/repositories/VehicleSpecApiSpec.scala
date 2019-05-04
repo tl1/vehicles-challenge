@@ -21,4 +21,8 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
     LocationSpec(1, 2).isSatisfiedBy(vehicle.copy(stopX = 1, stopY = 1)) shouldBe false
   }
 
+  it should "match same stop" in {
+    StopSpec(1).isSatisfiedBy(vehicle.copy(stopId = 1)) shouldBe true
+  }
+
 }
