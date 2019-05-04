@@ -39,7 +39,9 @@ object VehicleSpecApi {
     spec.x == vehicle.stopX && spec.y == vehicle.stopY
   }
 
-  private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] = (spec: StopSpec, vehicle: Vehicle) => true
+  private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] = (spec: StopSpec, vehicle: Vehicle) => {
+    spec.stopId == vehicle.stopId
+  }
 
 }
 

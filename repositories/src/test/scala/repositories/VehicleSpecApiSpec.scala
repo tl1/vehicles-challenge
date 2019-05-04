@@ -25,4 +25,7 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
     StopSpec(1).isSatisfiedBy(vehicle.copy(stopId = 1)) shouldBe true
   }
 
+  it should "not match different stop" in {
+    StopSpec(1).isSatisfiedBy(vehicle.copy(stopId = 2)) shouldBe false
+  }
 }
