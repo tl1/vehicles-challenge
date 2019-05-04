@@ -35,6 +35,7 @@ object VehicleSpecApi {
     case (stop: StopSpec, vehicle: Vehicle) => stop.isSatisfiedBy(vehicle)
     case (scheduledArrival: ScheduledArrivalAtSpec, vehicle: Vehicle) => scheduledArrival.isSatisfiedBy(vehicle)
     case (estimatedArrival: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => estimatedArrival.isSatisfiedBy(vehicle)
+    case (and: AndSpec, vehicle: Vehicle) => and.isSatisfiedBy(vehicle)
   }
 
   private implicit val locationSpecLike: SpecLike[LocationSpec, Vehicle] =
@@ -48,5 +49,8 @@ object VehicleSpecApi {
 
   private implicit val estimatedArrivalAtOrAfterSpecLike: SpecLike[EstimatedArrivalAtOrAfterSpec, Vehicle] =
     (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => spec.eta.isBefore(vehicle.eta) || spec.eta == vehicle.eta
+
+  private implicit val andSpecLike: SpecLike[AndSpec, Vehicle] =
+    (spec: AndSpec, vehicle: Vehicle) => true
 }
 

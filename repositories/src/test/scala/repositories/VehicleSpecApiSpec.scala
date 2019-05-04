@@ -49,4 +49,12 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
     EstimatedArrivalAtOrAfterSpec(LocalTime.of(10,3,0)).isSatisfiedBy(vehicle.copy(eta = LocalTime.of(10,3,1))) shouldBe true
   }
 
+  it should "match 'and' combination of 2 matching specifications" in {
+    AndSpec(
+      LocationSpec(1, 1),
+      ScheduledArrivalAtSpec(LocalTime.of(10,0,0))
+    ).isSatisfiedBy(
+      vehicle.copy(stopX = 1, stopY = 1, sta = LocalTime.of(10,0,0))
+    ) shouldBe true
+  }
 }
