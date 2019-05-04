@@ -16,8 +16,12 @@ class VehicleSortingSpec extends FlatSpec with Matchers {
     0 minutes
   ))
 
-  "Vehicle sorting" should "sort by estimated arrival" in {
+  "Vehicle sorting" should "sort by scheduled arrival" in {
     vehicles.sortWith(SortByScheduledArrival).map(_.sta) shouldBe sorted
+  }
+
+  it should "sort by estimated arrival" in {
+    vehicles.sortWith(SortByEstimatedArrival).map(_.eta) shouldBe sorted
   }
 
 }

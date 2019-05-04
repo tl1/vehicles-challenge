@@ -49,9 +49,8 @@ package object repositories {
 
   // Sorting -----------------------------------------------------------------------------------------------------------
 
-  val sortByScheduledArrival: (Vehicle, Vehicle) => Boolean = (v1, v2) => v1.sta.isBefore(v2.sta)
-
   implicit def sortToLt[S <: Sort](a: S): (Vehicle, Vehicle) => Boolean = a match {
     case SortByScheduledArrival => (v1, v2) => v1.sta.isBefore(v2.sta)
+    case SortByEstimatedArrival => (v1, v2) => v1.eta.isBefore(v2.eta)
   }
 }
