@@ -51,6 +51,6 @@ object VehicleSpecApi {
     (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => spec.eta.isBefore(vehicle.eta) || spec.eta == vehicle.eta
 
   private implicit val andSpecLike: SpecLike[AndSpec, Vehicle] =
-    (spec: AndSpec, vehicle: Vehicle) => true
+    (spec: AndSpec, vehicle: Vehicle) => spec.a.isSatisfiedBy(vehicle) && spec.b.isSatisfiedBy(vehicle)
 }
 

@@ -57,4 +57,13 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
       vehicle.copy(stopX = 1, stopY = 1, sta = LocalTime.of(10,0,0))
     ) shouldBe true
   }
+
+  it should "not match 'and' combination with 1 not matching specification" in {
+    AndSpec(
+      LocationSpec(1, 1),
+      ScheduledArrivalAtSpec(LocalTime.of(10,0,0))
+    ).isSatisfiedBy(
+      vehicle.copy(stopX = 1, stopY = 3, sta = LocalTime.of(10,0,0))
+    ) shouldBe false
+  }
 }
