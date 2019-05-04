@@ -2,10 +2,14 @@ import sbt._
 
 object Dependencies {
 
+  // Misc --------------------------------------------------------------------------------------------------------------
+
+  lazy val kantan_csv = "com.nrinaudo" %% "kantan.csv" % "0.5.0"
+
   // Test --------------------------------------------------------------------------------------------------------------
-  
+
   lazy val scala_test = "org.scalatest" %% "scalatest" % "3.0.5"
-  
+
   // Overrides ---------------------------------------------------------------------------------------------------------
 
   lazy val scala_parser_combinators = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.7"
