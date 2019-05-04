@@ -64,23 +64,15 @@ case class CsvVehicleBuilder(
     * @return Vehicles.
     */
   def build(): Seq[Vehicle] = {
-    val lines = linesCsv
-      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(l => l.lineId -> l).toMap)
-      .getOrElse(Map.empty)
-
-    val stops = stopsCsv
-      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(s => s.stopId -> s).toMap)
-      .getOrElse(Map.empty)
-
-    val delays = delaysCsv
-      .map(_.toSeq.filter(_.isRight).map(_.right.get).flatMap { d =>
-        val lineId = lines.values.find(_.lineName == d.lineName).map(_.lineId)
-        lineId.map(_ -> d)
-      }.toMap)
-      .getOrElse(Map.empty)
+    val lines = readLines
+    val stops = readStops
+    val delays = readDelays(lines)
 
     val vehicles = timesCsv
-      .map(_.toSeq.filter(_.isRight).map(_.right.get).map { time =>
+      .map(_.toSeq)
+      .getOrElse(Seq.empty)
+      .collect { case Right(l) => l }
+      .map { time =>
         val line = lines.get(time.lineId)
         val stop = stops.get(time.stopId)
         val delay = delays.get(time.lineId).map(d => d.delay).getOrElse(0 minutes)
@@ -94,10 +86,39 @@ case class CsvVehicleBuilder(
           time.time,
           time.time.plusMinutes(delay.toMinutes),
           delay
-        )})
-      .getOrElse(Seq.empty)
+        )}
 
     vehicles
+  }
+
+  private def readLines = {
+    linesCsv
+      .map(_.toSeq)
+      .getOrElse(Seq.empty)
+      .collect { case Right(l) => l }
+      .map(l => l.lineId -> l)
+      .toMap
+  }
+
+  private def readStops = {
+    stopsCsv
+      .map(_.toSeq)
+      .getOrElse(Seq.empty)
+      .collect { case Right(s) => s }
+      .map(s => s.stopId -> s)
+      .toMap
+  }
+
+  private def readDelays(lines: Map[Int, Line]) = {
+    delaysCsv
+      .map(_.toSeq)
+      .getOrElse(Seq.empty)
+      .collect { case Right(d) => d }
+      .flatMap { d =>
+        val lineId = lines.values.find(_.lineName == d.lineName).map(_.lineId)
+        lineId.map(_ -> d)
+      }
+      .toMap
   }
 
 }
