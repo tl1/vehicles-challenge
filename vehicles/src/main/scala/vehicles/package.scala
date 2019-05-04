@@ -10,7 +10,7 @@ package object vehicles {
     */
   case class Vehicle(
     lineId: Int,
-    linName: String,
+    lineName: String,
     stopId: Int,
     stopX: Int,
     stopY: Int,

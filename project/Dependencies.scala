@@ -2,6 +2,10 @@ import sbt._
 
 object Dependencies {
 
+  // Test --------------------------------------------------------------------------------------------------------------
+  
+  lazy val scala_test = "org.scalatest" %% "scalatest" % "3.0.5"
+  
   // Overrides ---------------------------------------------------------------------------------------------------------
 
   lazy val scala_parser_combinators = "org.scala-lang.modules" %% "scala-parser-combinators" % "1.0.7"
