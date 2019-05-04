@@ -24,4 +24,14 @@ class InMemoryVehicleRepositorySpec extends FlatSpec with Matchers {
     found should have size 3
     forAll (found) { _.stopId shouldBe 2 }
   }
+
+  it should "sort result as requested" in {
+    val found = repo.get(Query(
+      StopSpec(2),
+      SortByEstimatedArrival,
+      None
+    ))
+    found should have size 3
+    found.map(_.eta) shouldBe sorted
+  }
 }

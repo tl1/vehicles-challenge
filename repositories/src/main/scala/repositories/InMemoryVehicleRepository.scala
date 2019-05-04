@@ -7,5 +7,5 @@ import vehicles._
   */
 class InMemoryVehicleRepository(vehicles: Seq[Vehicle]) extends VehicleRepository {
   override def get(query: Query): Seq[Vehicle] =
-    vehicles.filter(query.spec.isSatisfiedBy)
+    vehicles.filter(query.spec.isSatisfiedBy).sortWith(query.sort)
 }

@@ -40,7 +40,7 @@ package object vehicles {
   final case object SortByEstimatedArrival extends Sort
 
   /** Full vehicle query consisting of specification, sorting and result size limit. */
-  final case class Query(spec: Spec, Sort: Sort, limit: Option[Int])
+  final case class Query(spec: Spec, sort: Sort, limit: Option[Int])
 
   /**
     * Repository port to retrieve vehicles from storage.
