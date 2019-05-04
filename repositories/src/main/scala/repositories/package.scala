@@ -36,13 +36,13 @@ package object repositories {
     (spec: LocationSpec, vehicle: Vehicle) => spec.x == vehicle.stopX && spec.y == vehicle.stopY
 
   implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] =
-    (spec: StopSpec, vehicle: Vehicle) => spec.stopId == vehicle.stopId
+    (spec: StopSpec, vehicle: Vehicle) => spec.id == vehicle.stopId
 
   implicit val scheduledArrivalAtSpecLike: SpecLike[ScheduledArrivalAtSpec, Vehicle] =
-    (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => spec.sta == vehicle.sta
+    (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => spec.time == vehicle.sta
 
   implicit val estimatedArrivalAtOrAfterSpecLike: SpecLike[EstimatedArrivalAtOrAfterSpec, Vehicle] =
-    (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => spec.eta.isBefore(vehicle.eta) || spec.eta == vehicle.eta
+    (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => spec.time.isBefore(vehicle.eta) || spec.time == vehicle.eta
 
   implicit val andSpecLike: SpecLike[AndSpec, Vehicle] =
     (spec: AndSpec, vehicle: Vehicle) => spec.a.isSatisfiedBy(vehicle) && spec.b.isSatisfiedBy(vehicle)

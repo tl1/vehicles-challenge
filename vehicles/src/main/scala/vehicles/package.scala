@@ -24,11 +24,11 @@ package object vehicles {
   /** Specifies vehicles by location. */
   final case class LocationSpec(x: Int, y: Int) extends Spec
   /** Specifies vehicles by stop. */
-  final case class StopSpec(stopId: Int) extends Spec
+  final case class StopSpec(id: Int) extends Spec
   /** Specifies vehicles by exact scheduled time of arrival. */
-  final case class ScheduledArrivalAtSpec(sta: LocalTime) extends Spec
+  final case class ScheduledArrivalAtSpec(time: LocalTime) extends Spec
   /** Specifies vehicles by estimated time of arrival at or after a given time. */
-  final case class EstimatedArrivalAtOrAfterSpec(eta: LocalTime) extends Spec
+  final case class EstimatedArrivalAtOrAfterSpec(time: LocalTime) extends Spec
   /** Combines two specifications by logical AND. */
   final case class AndSpec(a: Spec, b: Spec) extends Spec
 

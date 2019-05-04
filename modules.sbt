@@ -5,7 +5,7 @@ lazy val repositories = (project in file("./repositories"))
 
 lazy val api = (project in file("./api"))
   .enablePlugins(PlayScala)
-  .dependsOn(vehicles)
+  .dependsOn(vehicles, repositories)
 
 lazy val features = project in file("./features")
 
