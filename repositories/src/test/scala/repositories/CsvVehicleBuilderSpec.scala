@@ -18,8 +18,17 @@ class CsvVehicleBuilderSpec extends FlatSpec with Matchers {
       |1,2,10:03:00
     """.stripMargin
 
+  private val lines =
+    """
+      |line_id,line_name
+      |0,M48
+      |1,M29
+    """.stripMargin
+
   "CsvVehicleBuilder" should "build vehicles from 'times.csv'" in {
-    val vehicles = CsvVehicleBuilder().withTimesCsv(times).build()
+    val vehicles = CsvVehicleBuilder()
+      .withTimesCsv(times)
+      .build()
     vehicles should have size 2
     vehicles.head.lineId shouldBe 0
     vehicles.head.stopId shouldBe 3
@@ -27,5 +36,15 @@ class CsvVehicleBuilderSpec extends FlatSpec with Matchers {
     vehicles(1).lineId shouldBe 1
     vehicles(1).stopId shouldBe 2
     vehicles(1).sta shouldBe LocalTime.of(10,3,0)
+  }
+
+  it should "add line names from 'lines.csv'" in {
+    val vehicles = CsvVehicleBuilder()
+      .withTimesCsv(times)
+      .withLinesCsv(lines)
+      .build()
+    vehicles should have size 2
+    vehicles.head.lineName shouldBe "M48"
+    vehicles(1).lineName shouldBe "M29"
   }
 }

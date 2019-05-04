@@ -17,7 +17,8 @@ import scala.concurrent.duration._
   * Builds a collection of [[Vehicle]] from the provided data files.
   */
 case class CsvVehicleBuilder(
-  times: Option[CsvReader[ReadResult[Time]]] = None
+  timesCsv: Option[CsvReader[ReadResult[Time]]] = None,
+  linesCsv: Option[CsvReader[ReadResult[Line]]] = None
 ) {
 
   /**
@@ -27,22 +28,32 @@ case class CsvVehicleBuilder(
     * @return This builder.
     */
   def withTimesCsv(times: InputStream): CsvVehicleBuilder =
-    copy(times = Some(times.asCsvReader[Time](rfc.withHeader)))
+    copy(timesCsv = Some(times.asCsvReader[Time](rfc.withHeader)))
 
+  def withLinesCsv(lines: InputStream): CsvVehicleBuilder =
+    copy(linesCsv = Some(lines.asCsvReader[Line](rfc.withHeader)))
+
+  /**
+    * Builds vehicles from provided CSV sources.
+    * @return Vehicles.
+    */
   def build(): Seq[Vehicle] = {
-    (for {
-      ts <- times
-    } yield {
-      ts.toSeq.filter(_.isRight).map(_.right.get).map(time => Vehicle(
+    val lines = linesCsv
+      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(l => l.lineId -> l).toMap)
+      .getOrElse(Map.empty)
+    
+    val vehicles = timesCsv
+      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(time => Vehicle(
         time.lineId,
-        "",
+        lines.get(time.lineId).map(_.lineName).getOrElse(""),
         time.stopId,
         0, 0,
         time.time,
         LocalTime.now(),
         0 minutes
-      ))
-    }).getOrElse(Seq.empty)
+      )))
+      .getOrElse(Seq.empty)
+    vehicles
   }
 
 }
@@ -64,6 +75,12 @@ object Time {
 
 /** Represents an entry from 'lines.csv'. */
 case class Line(lineId: Int, lineName: String)
+object Line {
+  implicit val lineDecoder: RowDecoder[Line] = RowDecoder.ordered { (lineId: Int, lineName: String) =>
+    new Line(lineId, lineName)
+  }
+}
+
 /** Represents an entry from 'stops.csv'. */
 case class Stop(stopId: Int, x: Int, y: Int)
 /** Represents an entry from 'delays.csv'. */
