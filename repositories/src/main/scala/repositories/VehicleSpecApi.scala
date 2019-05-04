@@ -54,7 +54,7 @@ object VehicleSpecApi {
 
   private implicit val estimatedArrivalAtOrAfterSpecLike: SpecLike[EstimatedArrivalAtOrAfterSpec, Vehicle] =
     (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => {
-      true
+      spec.eta == vehicle.eta
     }
 }
 

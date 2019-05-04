@@ -40,4 +40,8 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
   it should "match estimated arrival at given time" in {
     EstimatedArrivalAtOrAfterSpec(LocalTime.of(10,3,0)).isSatisfiedBy(vehicle.copy(eta = LocalTime.of(10,3,0))) shouldBe true
   }
+
+  it should "match estimated arrival before given time" in {
+    EstimatedArrivalAtOrAfterSpec(LocalTime.of(10,3,0)).isSatisfiedBy(vehicle.copy(eta = LocalTime.of(10,0,0))) shouldBe false
+  }
 }
