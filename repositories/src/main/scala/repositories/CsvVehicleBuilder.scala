@@ -19,7 +19,8 @@ import scala.concurrent.duration._
 case class CsvVehicleBuilder(
   timesCsv: Option[CsvReader[ReadResult[Time]]] = None,
   linesCsv: Option[CsvReader[ReadResult[Line]]] = None,
-  stopsCsv: Option[CsvReader[ReadResult[Stop]]] = None
+  stopsCsv: Option[CsvReader[ReadResult[Stop]]] = None,
+  delaysCsv: Option[CsvReader[ReadResult[Delay]]] = None
 ) {
 
   /**
@@ -50,6 +51,15 @@ case class CsvVehicleBuilder(
     copy(stopsCsv = Some(stops.asCsvReader[Stop](rfc.withHeader)))
 
   /**
+    * Sets delays CSV for this builder.
+    *
+    * @param delays Stream that provides delays as CSV.
+    * @return This builder.
+    */
+  def withDelaysCsv(delays: InputStream): CsvVehicleBuilder =
+    copy(delaysCsv = Some(delays.asCsvReader[Delay](rfc.withHeader)))
+
+  /**
     * Builds vehicles from provided CSV sources.
     * @return Vehicles.
     */
@@ -62,10 +72,19 @@ case class CsvVehicleBuilder(
       .map(_.toSeq.filter(_.isRight).map(_.right.get).map(s => s.stopId -> s).toMap)
       .getOrElse(Map.empty)
 
+    val delays = delaysCsv
+      .map(_.toSeq.filter(_.isRight).map(_.right.get).flatMap { d =>
+        val lineId = lines.values.find(_.lineName == d.lineName).map(_.lineId)
+        lineId.map(_ -> d)
+      }.toMap)
+      .getOrElse(Map.empty)
+
     val vehicles = timesCsv
       .map(_.toSeq.filter(_.isRight).map(_.right.get).map { time =>
         val line = lines.get(time.lineId)
         val stop = stops.get(time.stopId)
+        val delay = delays.get(time.lineId).map(d => d.delay).getOrElse(0 minutes)
+
         Vehicle(
           time.lineId,
           line.map(_.lineName).getOrElse(""),
@@ -73,10 +92,11 @@ case class CsvVehicleBuilder(
           stop.map(_.x).getOrElse(0),
           stop.map(_.y).getOrElse(0),
           time.time,
-          LocalTime.now(),
-          0 minutes
+          time.time.plusMinutes(delay.toMinutes),
+          delay
         )})
       .getOrElse(Seq.empty)
+
     vehicles
   }
 
@@ -115,3 +135,8 @@ object Stop {
 
 /** Represents an entry from 'delays.csv'. */
 case class Delay(lineName: String, delay: Duration)
+object Delay {
+  implicit val delayDecoder: RowDecoder[Delay] = RowDecoder.ordered { (lineName: String, delay: Int) =>
+    new Delay(lineName, delay minutes)
+  }
+}

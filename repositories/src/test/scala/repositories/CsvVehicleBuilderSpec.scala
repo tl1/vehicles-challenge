@@ -6,6 +6,8 @@ import java.time.LocalTime
 
 import org.scalatest.{FlatSpec, Matchers}
 
+import scala.concurrent.duration._
+
 class CsvVehicleBuilderSpec extends FlatSpec with Matchers {
 
   private implicit def stringToInputStream(csv: String): InputStream =
@@ -30,6 +32,12 @@ class CsvVehicleBuilderSpec extends FlatSpec with Matchers {
       |stop_id,x,y
       |3,4,7
       |2,1,8
+    """.stripMargin
+
+  private val delays =
+    """
+      |line_name,delay
+      |M29,4
     """.stripMargin
 
   "CsvVehicleBuilder" should "build vehicles from 'times.csv'" in {
@@ -66,5 +74,19 @@ class CsvVehicleBuilderSpec extends FlatSpec with Matchers {
     vehicles.head.stopY shouldBe 7
     vehicles(1).stopX shouldBe 1
     vehicles(1).stopY shouldBe 8
+  }
+
+  it should "add delay from 'delays.csv'" in {
+    val vehicles = CsvVehicleBuilder()
+      .withTimesCsv(times)
+      .withLinesCsv(lines)
+      .withStopsCsv(stops)
+      .withDelaysCsv(delays)
+      .build()
+    vehicles should have size 2
+    vehicles.head.eta shouldBe LocalTime.of(10,0,0)
+    vehicles.head.delay shouldBe (0 minutes)
+    vehicles(1).eta shouldBe LocalTime.of(10,7,0)
+    vehicles(1).delay shouldBe (4 minutes)
   }
 }
