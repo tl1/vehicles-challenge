@@ -32,4 +32,9 @@ class VehicleSpecApiSpec extends FlatSpec with Matchers {
   it should "match scheduled arrival at given time" in {
     ScheduledArrivalAtSpec(LocalTime.of(10,0,0)).isSatisfiedBy(vehicle.copy(sta = LocalTime.of(10,0,0))) shouldBe true
   }
+
+  it should "not match scheduled arrival at different time" in {
+    ScheduledArrivalAtSpec(LocalTime.of(10,0,0)).isSatisfiedBy(vehicle.copy(sta = LocalTime.of(10,0,1))) shouldBe false
+  }
+
 }
