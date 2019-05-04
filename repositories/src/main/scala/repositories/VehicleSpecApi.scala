@@ -38,23 +38,15 @@ object VehicleSpecApi {
   }
 
   private implicit val locationSpecLike: SpecLike[LocationSpec, Vehicle] =
-    (spec: LocationSpec, vehicle: Vehicle) => {
-      spec.x == vehicle.stopX && spec.y == vehicle.stopY
-    }
+    (spec: LocationSpec, vehicle: Vehicle) => spec.x == vehicle.stopX && spec.y == vehicle.stopY
 
   private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] =
-    (spec: StopSpec, vehicle: Vehicle) => {
-      spec.stopId == vehicle.stopId
-    }
+    (spec: StopSpec, vehicle: Vehicle) => spec.stopId == vehicle.stopId
 
   private implicit val scheduledArrivalAtSpecLike: SpecLike[ScheduledArrivalAtSpec, Vehicle] =
-    (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => {
-      spec.sta == vehicle.sta
-    }
+    (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => spec.sta == vehicle.sta
 
   private implicit val estimatedArrivalAtOrAfterSpecLike: SpecLike[EstimatedArrivalAtOrAfterSpec, Vehicle] =
-    (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => {
-      spec.eta == vehicle.eta
-    }
+    (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => spec.eta.isBefore(vehicle.eta) || spec.eta == vehicle.eta
 }
 
