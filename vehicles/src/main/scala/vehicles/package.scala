@@ -46,7 +46,7 @@ package object vehicles {
     * Repository port to retrieve vehicles from storage.
     */
   trait VehicleRepository {
-    def get(query: Query): List[Vehicle]
+    def get(query: Query): Seq[Vehicle]
   }
 
 }

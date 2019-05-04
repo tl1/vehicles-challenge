@@ -3,8 +3,9 @@ package repositories
 import vehicles._
 
 /**
-  * Simple in memory implementation of [[VehicleRepository]].
+  * Simple in-memory implementation of [[VehicleRepository]].
   */
-class InMemoryVehicleRepository extends VehicleRepository {
-  override def get(query: Query): List[Vehicle] = ???
+class InMemoryVehicleRepository(vehicles: Seq[Vehicle]) extends VehicleRepository {
+  override def get(query: Query): Seq[Vehicle] =
+    vehicles.filter(query.spec.isSatisfiedBy)
 }
