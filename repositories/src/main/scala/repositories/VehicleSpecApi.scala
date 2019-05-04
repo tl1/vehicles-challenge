@@ -34,18 +34,27 @@ object VehicleSpecApi {
     case (location: LocationSpec, vehicle: Vehicle) => location.isSatisfiedBy(vehicle)
     case (stop: StopSpec, vehicle: Vehicle) => stop.isSatisfiedBy(vehicle)
     case (scheduledArrival: ScheduledArrivalAtSpec, vehicle: Vehicle) => scheduledArrival.isSatisfiedBy(vehicle)
+    case (estimatedArrival: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => estimatedArrival.isSatisfiedBy(vehicle)
   }
 
-  private implicit val locationSpecLike: SpecLike[LocationSpec, Vehicle] = (spec: LocationSpec, vehicle: Vehicle) => {
-    spec.x == vehicle.stopX && spec.y == vehicle.stopY
-  }
+  private implicit val locationSpecLike: SpecLike[LocationSpec, Vehicle] =
+    (spec: LocationSpec, vehicle: Vehicle) => {
+      spec.x == vehicle.stopX && spec.y == vehicle.stopY
+    }
 
-  private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] = (spec: StopSpec, vehicle: Vehicle) => {
-    spec.stopId == vehicle.stopId
-  }
+  private implicit val stopSpecLike: SpecLike[StopSpec, Vehicle] =
+    (spec: StopSpec, vehicle: Vehicle) => {
+      spec.stopId == vehicle.stopId
+    }
 
-  private implicit val scheduledArrivalAtSpecLike: SpecLike[ScheduledArrivalAtSpec, Vehicle] = (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => {
-    spec.sta == vehicle.sta
-  }
+  private implicit val scheduledArrivalAtSpecLike: SpecLike[ScheduledArrivalAtSpec, Vehicle] =
+    (spec: ScheduledArrivalAtSpec, vehicle: Vehicle) => {
+      spec.sta == vehicle.sta
+    }
+
+  private implicit val estimatedArrivalAtOrAfterSpecLike: SpecLike[EstimatedArrivalAtOrAfterSpec, Vehicle] =
+    (spec: EstimatedArrivalAtOrAfterSpec, vehicle: Vehicle) => {
+      true
+    }
 }
 
