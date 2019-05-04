@@ -18,7 +18,8 @@ import scala.concurrent.duration._
   */
 case class CsvVehicleBuilder(
   timesCsv: Option[CsvReader[ReadResult[Time]]] = None,
-  linesCsv: Option[CsvReader[ReadResult[Line]]] = None
+  linesCsv: Option[CsvReader[ReadResult[Line]]] = None,
+  stopsCsv: Option[CsvReader[ReadResult[Stop]]] = None
 ) {
 
   /**
@@ -30,8 +31,23 @@ case class CsvVehicleBuilder(
   def withTimesCsv(times: InputStream): CsvVehicleBuilder =
     copy(timesCsv = Some(times.asCsvReader[Time](rfc.withHeader)))
 
+  /**
+    * Sets lines CSV for this builder.
+    *
+    * @param lines Stream that provides lines as CSV.
+    * @return This builder.
+    */
   def withLinesCsv(lines: InputStream): CsvVehicleBuilder =
     copy(linesCsv = Some(lines.asCsvReader[Line](rfc.withHeader)))
+
+  /**
+    * Sets stops CSV for this builder.
+    *
+    * @param stops Stream that provides stops as CSV.
+    * @return This builder.
+    */
+  def withStopsCsv(stops: InputStream): CsvVehicleBuilder =
+    copy(stopsCsv = Some(stops.asCsvReader[Stop](rfc.withHeader)))
 
   /**
     * Builds vehicles from provided CSV sources.
@@ -41,17 +57,25 @@ case class CsvVehicleBuilder(
     val lines = linesCsv
       .map(_.toSeq.filter(_.isRight).map(_.right.get).map(l => l.lineId -> l).toMap)
       .getOrElse(Map.empty)
-    
+
+    val stops = stopsCsv
+      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(s => s.stopId -> s).toMap)
+      .getOrElse(Map.empty)
+
     val vehicles = timesCsv
-      .map(_.toSeq.filter(_.isRight).map(_.right.get).map(time => Vehicle(
-        time.lineId,
-        lines.get(time.lineId).map(_.lineName).getOrElse(""),
-        time.stopId,
-        0, 0,
-        time.time,
-        LocalTime.now(),
-        0 minutes
-      )))
+      .map(_.toSeq.filter(_.isRight).map(_.right.get).map { time =>
+        val line = lines.get(time.lineId)
+        val stop = stops.get(time.stopId)
+        Vehicle(
+          time.lineId,
+          line.map(_.lineName).getOrElse(""),
+          time.stopId,
+          stop.map(_.x).getOrElse(0),
+          stop.map(_.y).getOrElse(0),
+          time.time,
+          LocalTime.now(),
+          0 minutes
+        )})
       .getOrElse(Seq.empty)
     vehicles
   }
@@ -83,5 +107,11 @@ object Line {
 
 /** Represents an entry from 'stops.csv'. */
 case class Stop(stopId: Int, x: Int, y: Int)
+object Stop {
+  implicit val stopDecoder: RowDecoder[Stop] = RowDecoder.ordered { (stopId: Int, x: Int, y: Int) =>
+    new Stop(stopId, x, y)
+  }
+}
+
 /** Represents an entry from 'delays.csv'. */
 case class Delay(lineName: String, delay: Duration)
