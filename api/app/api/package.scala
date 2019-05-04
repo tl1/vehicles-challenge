@@ -29,6 +29,7 @@ package object api {
         case "scheduledArrivalAt" => value.validate(scheduledArrivalAtSpecReads)
         case "estimatedArrivalAtOrAfter" => value.validate(estimatedArrivalAtOrAfterSpecReads)
         case "and" => value.validate(andSpecReads)
+        case _ => JsError("unexpected specification key")
       }
     case _ =>
       JsError("expected object with 1 key")
