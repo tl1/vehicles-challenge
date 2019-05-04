@@ -7,10 +7,11 @@ import vehicles._
 
 import scala.concurrent.duration._
 
-class VehicleSpecApplicationSpec extends FlatSpec with Matchers {
-  val vehicle = Vehicle(0, "LINE", 0, 0, 0, LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0), 0 minutes)
+class VehicleSpecificationSpec extends FlatSpec with Matchers {
 
-  "Specs application" should "match same location" in {
+  private val vehicle = Vehicle(0, "LINE", 0, 0, 0, LocalTime.of(0, 0, 0), LocalTime.of(0, 0, 0), 0 minutes)
+
+  "Vehicle specifications" should "match same location" in {
     LocationSpec(1, 1).isSatisfiedBy(vehicle.copy(stopX = 1, stopY = 1)) shouldBe true
   }
 
@@ -69,4 +70,5 @@ class VehicleSpecApplicationSpec extends FlatSpec with Matchers {
       .asInstanceOf[Spec]
       .isSatisfiedBy(vehicle.copy(eta = LocalTime.of(10,3,0))) shouldBe true
   }
+
 }

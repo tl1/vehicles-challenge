@@ -1,6 +1,8 @@
-import vehicles._
+import vehicles.{SortByScheduledArrival, _}
 
 package object repositories {
+
+  // Specifications ----------------------------------------------------------------------------------------------------
 
   /**
     * Type class for matching specifications against a subject. Specification design pattern implemented with
@@ -45,4 +47,11 @@ package object repositories {
   implicit val andSpecLike: SpecLike[AndSpec, Vehicle] =
     (spec: AndSpec, vehicle: Vehicle) => spec.a.isSatisfiedBy(vehicle) && spec.b.isSatisfiedBy(vehicle)
 
+  // Sorting -----------------------------------------------------------------------------------------------------------
+
+  val sortByScheduledArrival: (Vehicle, Vehicle) => Boolean = (v1, v2) => v1.sta.isBefore(v2.sta)
+
+  implicit def sortToLt[S <: Sort](a: S): (Vehicle, Vehicle) => Boolean = a match {
+    case SortByScheduledArrival => (v1, v2) => v1.sta.isBefore(v2.sta)
+  }
 }
